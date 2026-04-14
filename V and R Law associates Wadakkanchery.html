@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>V & R Law Associates — Advocates, Wadakkanchery, Thrissur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #080C0A;
+      --bg-elevated: #0F1613;
+      --fg: #EDE9E0;
+      --fg-muted: #7D8A83;
+      --accent: #C9A84C;
+      --accent-dim: rgba(201,168,76,0.1);
+      --accent-glow: rgba(201,168,76,0.2);
+      --deep: #142019;
+      --card: #111A15;
+      --border: #1E2E26;
+      --emerald: #2D6B4F;
+      --emerald-dim: rgba(45,107,79,0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--bg);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .noise {
+      position: fixed; inset: 0; z-index: 1;
+      pointer-events: none; opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    #bg-canvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .rd1 { transition-delay: 0.1s; }
+    .rd2 { transition-delay: 0.2s; }
+    .rd3 { transition-delay: 0.3s; }
+    .rd4 { transition-delay: 0.4s; }
+    .rd5 { transition-delay: 0.5s; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      backdrop-filter: blur(24px) saturate(1.2);
+      -webkit-backdrop-filter: blur(24px) saturate(1.2);
+      background: rgba(8,12,10,0.72);
+      border-bottom: 1px solid var(--border);
+      transition: transform 0.45s ease;
+    }
+    nav.hide-nav { transform: translateY(-100%); }
+    .nav-link {
+      color: var(--fg-muted); text-decoration: none;
+      font-size: 0.78rem; letter-spacing: 0.08em;
+      text-transform: uppercase; transition: color 0.3s;
+      position: relative; font-weight: 500;
+    }
+    .nav-link::after {
+      content: ''; position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--accent);
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-link:hover { color: var(--fg); }
+    .nav-link:hover::after { width: 100%; }
+
+    .mobile-menu {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(8,12,10,0.96);
+      backdrop-filter: blur(20px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; color: var(--fg);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 7.5vw, 6.5rem);
+      font-weight: 800; line-height: 0.95;
+      letter-spacing: -0.015em;
+    }
+    .hero-accent { color: var(--accent); }
+    .hero-line { display: block; overflow: hidden; }
+    .hero-line span {
+      display: inline-block;
+      animation: slideUp 0.85s cubic-bezier(0.16,1,0.3,1) forwards;
+      opacity: 0; transform: translateY(100%);
+    }
+    .hero-line:nth-child(2) span { animation-delay: 0.12s; }
+    .hero-line:nth-child(3) span { animation-delay: 0.24s; }
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-fade {
+      animation: fadeIn 1s 0.5s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .gold-line {
+      width: 56px; height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .sec-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent);
+      font-weight: 600;
+    }
+    .sec-heading {
+      font-size: clamp(1.8rem, 3.8vw, 3rem);
+      font-weight: 700; line-height: 1.15;
+    }
+
+    .adv-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1),
+                  border-color 0.4s, box-shadow 0.5s;
+    }
+    .adv-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 24px 64px rgba(201,168,76,0.06);
+    }
+    .adv-img-wrap {
+      position: relative; overflow: hidden;
+      aspect-ratio: 3/3.6;
+      background: var(--deep);
+    }
+    .adv-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(25%) contrast(1.05);
+      transition: filter 0.5s, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .adv-card:hover .adv-img-wrap img {
+      filter: grayscale(0%) contrast(1.05);
+      transform: scale(1.03);
+    }
+    .adv-img-wrap::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, var(--card) 5%, transparent 55%);
+    }
+    .adv-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 100px;
+      font-size: 0.72rem; color: var(--accent);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .prac-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+                  border-color 0.3s, background 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .prac-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--emerald));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .prac-card:hover::before { transform: scaleX(1); }
+    .prac-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201,168,76,0.3);
+      background: var(--bg-elevated);
+    }
+    .prac-icon {
+      width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-dim);
+      border-radius: 12px;
+      color: var(--accent); font-size: 1.1rem;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, var(--accent-dim), var(--emerald-dim));
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 12px;
+      padding: 16px 20px;
+      position: relative;
+    }
+    .highlight-box::before {
+      content: ''; position: absolute;
+      left: 0; top: 12px; bottom: 12px;
+      width: 3px; border-radius: 3px;
+      background: var(--accent);
+    }
+
+    .cta-gold {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 30px;
+      background: var(--accent); color: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700; font-size: 0.88rem;
+      letter-spacing: 0.03em; text-transform: uppercase;
+      border: none; border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .cta-gold:hover {
+      background: #D6B55A;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(201,168,76,0.25);
+    }
+    .cta-outline {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 30px;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--fg); border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600; font-size: 0.88rem;
+      letter-spacing: 0.03em; text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.3s, color 0.3s, transform 0.3s;
+    }
+    .cta-outline:hover {
+      border-color: var(--accent); color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      font-weight: 800; color: var(--accent); line-height: 1;
+    }
+
+    .marquee-track {
+      display: flex; gap: 3rem;
+      animation: marquee 28s linear infinite;
+      width: max-content;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-weight: 400; color: var(--border);
+      white-space: nowrap;
+    }
+
+    .form-input {
+      width: 100%; padding: 14px 18px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--fg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+    .form-input::placeholder { color: var(--fg-muted); }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    textarea.form-input { resize: vertical; min-height: 120px; }
+
+    .toast {
+      position: fixed; bottom: 30px; right: 30px;
+      z-index: 999;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 16px 24px;
+      color: var(--fg);
+      font-size: 0.9rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      transform: translateY(120%);
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .toast.show { transform: translateY(0); }
+
+    .foot-link {
+      color: var(--fg-muted); text-decoration: none;
+      font-size: 0.85rem; transition: color 0.3s;
+    }
+    .foot-link:hover { color: var(--accent); }
+
+    .scroll-progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--accent);
+      z-index: 999; width: 0;
+      transition: width 0.05s linear;
+    }
+
+    .glow-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(100px); pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .marquee-track { animation: none; }
+    }
+
+    @media (max-width: 768px) {
+      .desk-nav { display: none !important; }
+      .mob-toggle { display: flex !important; }
+    }
+    @media (min-width: 769px) {
+      .mob-toggle { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="noise"></div>
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav id="mainNav">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#hero" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+        <div style="width:38px;height:38px;border:2px solid var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'Playfair Display',serif;font-weight:800;color:var(--accent);font-size:1rem;">V</span>
+        </div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--fg);font-size:0.95rem;line-height:1.2;">V & R Law</div>
+          <div style="font-size:0.6rem;color:var(--fg-muted);letter-spacing:0.12em;text-transform:uppercase;">Associates</div>
+        </div>
+      </a>
+
+      <div class="desk-nav flex items-center gap-8">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#advocates" class="nav-link">Advocates</a>
+        <a href="#practice" class="nav-link">Practice</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+
+      <button class="mob-toggle" id="mobToggle" aria-label="Open menu"
+        style="display:none;width:40px;height:40px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--fg);font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer;">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button id="mobClose" aria-label="Close menu"
+      style="position:absolute;top:20px;right:24px;width:40px;height:40px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--fg);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+      <i class="fas fa-times"></i>
+    </button>
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#advocates" onclick="closeMobile()">Advocates</a>
+    <a href="#practice" onclick="closeMobile()">Practice Areas</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+  </div>
+
+  <!-- Hero Section -->
+  <header id="hero" class="relative min-h-screen flex items-center" style="z-index:2;">
+    <div class="glow-orb" style="width:500px;height:500px;background:rgba(201,168,76,0.06);top:-100px;right:-100px;"></div>
+    <div class="glow-orb" style="width:400px;height:400px;background:rgba(45,107,79,0.08);bottom:-50px;left:-100px;"></div>
+
+    <div class="max-w-7xl mx-auto px-6 pt-32 pb-20 w-full">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <div class="hero-fade" style="margin-bottom:1.5rem;">
+            <div class="adv-badge" style="animation:float 3s ease-in-out infinite;">
+              <i class="fas fa-scale-balanced" style="font-size:0.7rem;"></i>
+              Wadakkanchery, Thrissur
+            </div>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="hero-line"><span>Justice,</span></span>
+            <span class="hero-line"><span>Delivered with</span></span>
+            <span class="hero-line"><span class="hero-accent">Precision.</span></span>
+          </h1>
+
+          <div class="hero-fade" style="margin-top:2rem;">
+            <p style="font-size:1.05rem;color:var(--fg-muted);max-width:480px;line-height:1.8;">
+              V and R Law Associates provides client-focused legal services — specialising in criminal defence, bail applications, and strategic litigation across Kerala.
+            </p>
+          </div>
+
+          <div class="hero-fade flex flex-wrap gap-4" style="margin-top:2.5rem;">
+            <a href="#contact" class="cta-gold">
+              Contact Us
+              <i class="fas fa-arrow-right" style="font-size:0.8rem;"></i>
+            </a>
+            <a href="#advocates" class="cta-outline">
+              Meet Our Advocates
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-fade relative hidden lg:block">
+          <div style="position:relative;">
+            <div style="position:absolute;inset:-2px;border:1px solid var(--border);border-radius:24px;transform:rotate(3deg);"></div>
+            <div style="aspect-ratio:4/5;border-radius:22px;overflow:hidden;border:1px solid var(--border);background:var(--card);position:relative;">
+              <img src="https://picsum.photos/seed/lawoffice-kr/800/1000.jpg" alt="V and R Law Associates office"
+                style="width:100%;height:100%;object-fit:cover;filter:grayscale(20%) brightness(0.85);" />
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 5%,transparent 50%);"></div>
+              <div style="position:absolute;bottom:24px;left:24px;right:24px;">
+                <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--fg);">Est. Wadakkanchery</div>
+                <div style="font-size:0.78rem;color:var(--fg-muted);margin-top:4px;">Trusted Legal Representation</div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;top:40px;right:-30px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 22px;backdrop-filter:blur(12px);animation:float 4s ease-in-out infinite;">
+            <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:var(--accent);">Criminal</div>
+            <div style="font-size:0.72rem;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.08em;">Law Specialists</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Marquee -->
+  <section style="z-index:2;position:relative;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 0;">
+    <div class="marquee-track">
+      <span class="marquee-text">Criminal Law</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Anticipatory Bail</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">General Litigation</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Legal Strategy</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Court Representation</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Case Documentation</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Criminal Law</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Anticipatory Bail</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">General Litigation</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Legal Strategy</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Court Representation</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+      <span class="marquee-text">Case Documentation</span>
+      <span class="marquee-text" style="color:var(--accent);">&bull;</span>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" style="z-index:2;position:relative;padding:120px 0 100px;">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-16 items-start">
+        <div>
+          <div class="reveal sec-label">About the Firm</div>
+          <h2 class="reveal rd1 sec-heading" style="margin-top:12px;">
+            Client-Focused Legal<br/>Practice in Thrissur
+          </h2>
+          <div class="reveal rd2 gold-line" style="margin-top:20px;"></div>
+        </div>
+        <div>
+          <p class="reveal rd2" style="color:var(--fg-muted);font-size:1.02rem;line-height:1.9;margin-bottom:1.2rem;">
+            V and R Law Associates is a Wadakkanchery-based legal practice led by Advocate Riju Raj and Advocate Vishnudev. The firm provides client-focused legal services, mainly handling criminal matters, bail applications, and general litigation, with an emphasis on clear guidance and timely case handling.
+          </p>
+          <p class="reveal rd3" style="color:var(--fg-muted);font-size:1.02rem;line-height:1.9;">
+            With a commitment to structured legal reasoning and effective courtroom response, the firm has built a reputation for handling urgent, time-sensitive cases with the precision they demand. Every client receives clear communication and strategic counsel from the very first consultation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats row — 3 cards now, no 24/7 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6" style="margin-top:80px;">
+        <div class="reveal rd1" style="text-align:center;padding:32px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+          <div class="stat-num" data-count="2">0</div>
+          <div style="font-size:0.78rem;color:var(--fg-muted);margin-top:8px;text-transform:uppercase;letter-spacing:0.08em;">Lead Advocates</div>
+        </div>
+        <div class="reveal rd2" style="text-align:center;padding:32px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+          <div class="stat-num" data-count="500" data-suffix="+">0</div>
+          <div style="font-size:0.78rem;color:var(--fg-muted);margin-top:8px;text-transform:uppercase;letter-spacing:0.08em;">Cases Handled</div>
+        </div>
+        <div class="reveal rd3" style="text-align:center;padding:32px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+          <div class="stat-num" data-count="98" data-suffix="%">0</div>
+          <div style="font-size:0.78rem;color:var(--fg-muted);margin-top:8px;text-transform:uppercase;letter-spacing:0.08em;">Client Satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advocates Section -->
+  <section id="advocates" style="z-index:2;position:relative;padding:100px 0 120px;background:var(--bg-elevated);">
+    <div class="glow-orb" style="width:600px;height:600px;background:rgba(201,168,76,0.04);top:-200px;left:50%;transform:translateX(-50%);"></div>
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center" style="margin-bottom:64px;">
+        <div class="reveal sec-label">Our Advocates</div>
+        <h2 class="reveal rd1 sec-heading" style="margin-top:12px;">
+          Experienced Legal Minds
+        </h2>
+        <div class="reveal rd2 gold-line" style="margin:20px auto 0;"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <!-- Adv. Riju Raj -->
+        <div class="reveal rd1 adv-card">
+          <div class="adv-img-wrap">
+            <img src="https://picsum.photos/seed/advocate-riju/600/720.jpg" alt="Advocate Riju Raj" />
+          </div>
+          <div style="padding:28px 28px 32px;">
+            <div class="adv-badge" style="margin-bottom:16px;">
+              <i class="fas fa-gavel" style="font-size:0.65rem;"></i>
+              Criminal Law Specialist
+            </div>
+            <h3 style="font-size:1.6rem;font-weight:700;color:var(--fg);">Adv. Riju Raj</h3>
+            <p style="color:var(--fg-muted);font-size:0.88rem;margin-top:6px;line-height:1.7;">
+              Advocate Riju Raj primarily focuses on criminal law, especially anticipatory bail and related procedural matters. His work involves handling urgent and time-sensitive cases, requiring quick preparation and effective courtroom response. His practice reflects a structured approach in managing criminal proceedings.
+            </p>
+            <div class="highlight-box" style="margin-top:20px;">
+              <div style="padding-left:14px;">
+                <div style="font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:4px;">Key Strength</div>
+                <div style="font-size:0.88rem;color:var(--fg);line-height:1.6;">
+                  Strong in bail and criminal cases, particularly where immediate legal action is required.
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;">
+              <span style="padding:5px 12px;background:var(--accent-dim);border-radius:8px;font-size:0.72rem;color:var(--accent);font-weight:500;">Anticipatory Bail</span>
+              <span style="padding:5px 12px;background:var(--accent-dim);border-radius:8px;font-size:0.72rem;color:var(--accent);font-weight:500;">Criminal Defence</span>
+              <span style="padding:5px 12px;background:var(--accent-dim);border-radius:8px;font-size:0.72rem;color:var(--accent);font-weight:500;">Emergency Response</span>
+              <span style="padding:5px 12px;background:var(--accent-dim);border-radius:8px;font-size:0.72rem;color:var(--accent);font-weight:500;">Court Representation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adv. Vishnudev -->
+        <div class="reveal rd2 adv-card">
+          <div class="adv-img-wrap">
+            <img src="https://picsum.photos/seed/advocate-vishnu/600/720.jpg" alt="Advocate Vishnudev" />
+          </div>
+          <div style="padding:28px 28px 32px;">
+            <div class="adv-badge" style="margin-bottom:16px;">
+              <i class="fas fa-file-contract" style="font-size:0.65rem;"></i>
+              Legal Strategy & Documentation
+            </div>
+            <h3 style="font-size:1.6rem;font-weight:700;color:var(--fg);">Adv. Vishnudev</h3>
+            <p style="color:var(--fg-muted);font-size:0.88rem;margin-top:6px;line-height:1.7;">
+              Advocate Vishnudev contributes to the firm with a focus on structured legal matters and detailed case handling. He is involved in cases that require careful legal reasoning, documentation, and strategic preparation, supporting more complex legal situations.
+            </p>
+            <div class="highlight-box" style="margin-top:20px;">
+              <div style="padding-left:14px;">
+                <div style="font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:4px;">Key Strength</div>
+                <div style="font-size:0.88rem;color:var(--fg);line-height:1.6;">
+                  Brings depth in legal strategy, preparation, and handling of detailed legal issues.
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;">
+              <span style="padding:5px 12px;background:var(--emerald-dim);border-radius:8px;font-size:0.72rem;color:var(--emerald);font-weight:500;">Legal Strategy</span>
+              <span style="padding:5px 12px;background:var(--emerald-dim);border-radius:8px;font-size:0.72rem;color:var(--emerald);font-weight:500;">Documentation</span>
+              <span style="padding:5px 12px;background:var(--emerald-dim);border-radius:8px;font-size:0.72rem;color:var(--emerald);font-weight:500;">Case Preparation</span>
+              <span style="padding:5px 12px;background:var(--emerald-dim);border-radius:8px;font-size:0.72rem;color:var(--emerald);font-weight:500;">Legal Reasoning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Practice Areas -->
+  <section id="practice" style="z-index:2;position:relative;padding:100px 0 120px;">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center" style="margin-bottom:64px;">
+        <div class="reveal sec-label">Practice Areas</div>
+        <h2 class="reveal rd1 sec-heading" style="margin-top:12px;">
+          Areas of Expertise
+        </h2>
+        <div class="reveal rd2 gold-line" style="margin:20px auto 0;"></div>
+        <p class="reveal rd3" style="color:var(--fg-muted);max-width:560px;margin:20px auto 0;font-size:0.95rem;line-height:1.7;">
+          Our firm is equipped to handle a wide range of legal matters with a focus on criminal law and strategic litigation.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="reveal rd1 prac-card">
+          <div class="prac-icon" style="margin-bottom:20px;">
+            <i class="fas fa-shield-halved"></i>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin-bottom:10px;">Criminal Defence</h4>
+          <p style="color:var(--fg-muted);font-size:0.85rem;line-height:1.7;">Comprehensive criminal defence representation from FIR to final verdict, ensuring the rights of the accused are vigorously protected.</p>
+        </div>
+
+        <div class="reveal rd2 prac-card">
+          <div class="prac-icon" style="margin-bottom:20px;">
+            <i class="fas fa-door-open"></i>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin-bottom:10px;">Bail Applications</h4>
+          <p style="color:var(--fg-muted);font-size:0.85rem;line-height:1.7;">Expert handling of regular bail, anticipatory bail, and default bail applications with swift preparation for urgent hearings.</p>
+        </div>
+
+        <div class="reveal rd3 prac-card">
+          <div class="prac-icon" style="margin-bottom:20px;">
+            <i class="fas fa-gavel"></i>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin-bottom:10px;">Court Representation</h4>
+          <p style="color:var(--fg-muted);font-size:0.85rem;line-height:1.7;">Effective advocacy before courts at all levels — from magistrate courts to sessions courts and higher judiciary proceedings.</p>
+        </div>
+
+        <div class="reveal rd1 prac-card">
+          <div class="prac-icon" style="margin-bottom:20px;">
+            <i class="fas fa-file-lines"></i>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin-bottom:10px;">Case Documentation</h4>
+          <p style="color:var(--fg-muted);font-size:0.85rem;line-height:1.7;">Meticulous preparation of legal documents, pleadings, written arguments, and case briefs for strong procedural compliance.</p>
+        </div>
+
+        <div class="reveal rd2 prac-card">
+          <div class="prac-icon" style="margin-bottom:20px;">
+            <i class="fas fa-chess"></i>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin-bottom:10px;">Legal Strategy</h4>
+          <p style="color:var(--fg-muted);font-size:0.85rem;line-height:1.7;">Deep legal analysis and strategic planning tailored to each case, identifying strengths and building the most effective defence approach.</p>
+        </div>
+
+        <div class="reveal rd3 prac-card">
+          <div class="prac-icon" style="margin-bottom:20px;">
+            <i class="fas fa-scale-balanced"></i>
+          </div>
+          <h4 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin-bottom:10px;">General Litigation</h4>
+          <p style="color:var(--fg-muted);font-size:0.85rem;line-height:1.7;">Handling a broad spectrum of civil and criminal litigation matters with a practical, result-oriented approach for every client.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section style="z-index:2;position:relative;padding:100px 0;background:var(--bg-elevated);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <div class="reveal sec-label">Why Choose Us</div>
+          <h2 class="reveal rd1 sec-heading" style="margin-top:12px;">
+            Your Case Deserves<br/>Serious Attention
+          </h2>
+          <div class="reveal rd2 gold-line" style="margin-top:20px;"></div>
+          <p class="reveal rd3" style="color:var(--fg-muted);margin-top:20px;font-size:0.95rem;line-height:1.8;">
+            When your freedom or rights are at stake, you need advocates who act fast, think clearly, and fight relentlessly. That is exactly what V and R Law Associates delivers.
+          </p>
+        </div>
+
+        <div class="grid gap-5">
+          <div class="reveal rd1 flex gap-5 items-start" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="width:44px;height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:1rem;">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div>
+              <h4 style="font-size:1rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Rapid Response</h4>
+              <p style="color:var(--fg-muted);font-size:0.83rem;line-height:1.6;">Urgent criminal matters demand immediate action. We prioritise time-sensitive cases and prepare arguments swiftly.</p>
+            </div>
+          </div>
+
+          <div class="reveal rd2 flex gap-5 items-start" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="width:44px;height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:1rem;">
+              <i class="fas fa-comments"></i>
+            </div>
+            <div>
+              <h4 style="font-size:1rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Clear Communication</h4>
+              <p style="color:var(--fg-muted);font-size:0.83rem;line-height:1.6;">No legal jargon. We explain your position, options, and progress in plain language at every stage.</p>
+            </div>
+          </div>
+
+          <div class="reveal rd3 flex gap-5 items-start" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="width:44px;height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:1rem;">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <div>
+              <h4 style="font-size:1rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Proven Track Record</h4>
+              <p style="color:var(--fg-muted);font-size:0.83rem;line-height:1.6;">Consistent results in criminal defence and bail matters, earned through thorough preparation and sharp advocacy.</p>
+            </div>
+          </div>
+
+          <div class="reveal rd4 flex gap-5 items-start" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="width:44px;height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:1rem;">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <div>
+              <h4 style="font-size:1rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Client-First Approach</h4>
+              <p style="color:var(--fg-muted);font-size:0.83rem;line-height:1.6;">Every decision is made with your best interest in mind. We treat every case with the urgency it deserves.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" style="z-index:2;position:relative;padding:120px 0;">
+    <div class="glow-orb" style="width:500px;height:500px;background:rgba(201,168,76,0.04);bottom:-200px;right:-100px;"></div>
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center" style="margin-bottom:64px;">
+        <div class="reveal sec-label">Get in Touch</div>
+        <h2 class="reveal rd1 sec-heading" style="margin-top:12px;">
+          Contact Us
+        </h2>
+        <div class="reveal rd2 gold-line" style="margin:20px auto 0;"></div>
+        <p class="reveal rd3" style="color:var(--fg-muted);max-width:500px;margin:20px auto 0;font-size:0.95rem;line-height:1.7;">
+          Facing a legal issue? Reach out to discuss your matter with our advocates.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-5 gap-10">
+        <!-- Contact Info -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+          <div class="reveal rd1" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:0.9rem;">
+                <i class="fas fa-location-dot"></i>
+              </div>
+              <div style="font-size:0.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;">Office Address</div>
+            </div>
+            <p style="color:var(--fg-muted);font-size:0.88rem;line-height:1.6;padding-left:50px;">
+              V and R Law Associates<br/>
+              Wadakkanchery, Thrissur<br/>
+              Kerala, India
+            </p>
+          </div>
+
+          <div class="reveal rd2" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:0.9rem;">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div style="font-size:0.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;">Phone</div>
+            </div>
+            <p style="color:var(--fg-muted);font-size:0.88rem;padding-left:50px;">
+              Reach out during office hours
+            </p>
+          </div>
+
+          <div class="reveal rd3" style="padding:24px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border-radius:10px;color:var(--accent);font-size:0.9rem;">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div style="font-size:0.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;">Office Hours</div>
+            </div>
+            <p style="color:var(--fg-muted);font-size:0.88rem;line-height:1.7;padding-left:50px;">
+              Monday – Saturday<br/>
+              10:00 AM – 7:00 PM
+            </p>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="reveal rd2 lg:col-span-3" style="padding:36px;background:var(--card);border:1px solid var(--border);border-radius:20px;">
+          <form id="contactForm" onsubmit="handleSubmit(event)">
+            <div class="grid sm:grid-cols-2 gap-4" style="margin-bottom:16px;">
+              <div>
+                <label style="font-size:0.72rem;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:8px;font-weight:500;">Full Name</label>
+                <input type="text" class="form-input" placeholder="Your name" required />
+              </div>
+              <div>
+                <label style="font-size:0.72rem;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:8px;font-weight:500;">Phone Number</label>
+                <input type="tel" class="form-input" placeholder="+91 XXXXX XXXXX" required />
+              </div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="font-size:0.72rem;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:8px;font-weight:500;">Email Address</label>
+              <input type="email" class="form-input" placeholder="you@example.com" />
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="font-size:0.72rem;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:8px;font-weight:500;">Type of Case</label>
+              <select class="form-input" required>
+                <option value="" disabled selected>Select case type</option>
+                <option value="criminal">Criminal Defence</option>
+                <option value="bail">Bail Application</option>
+                <option value="anticipatory-bail">Anticipatory Bail</option>
+                <option value="litigation">General Litigation</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div style="margin-bottom:24px;">
+              <label style="font-size:0.72rem;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:8px;font-weight:500;">Brief Description</label>
+              <textarea class="form-input" placeholder="Describe your legal matter briefly..." required></textarea>
+            </div>
+            <button type="submit" class="cta-gold" style="width:100%;justify-content:center;">
+              Send Enquiry
+              <i class="fas fa-paper-plane" style="font-size:0.8rem;"></i>
+            </button>
+            <p style="text-align:center;font-size:0.72rem;color:var(--fg-muted);margin-top:14px;">
+              Your information is kept strictly confidential.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="z-index:2;position:relative;border-top:1px solid var(--border);padding:60px 0 30px;background:var(--bg-elevated);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10" style="margin-bottom:48px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <div style="width:34px;height:34px;border:2px solid var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:'Playfair Display',serif;font-weight:800;color:var(--accent);font-size:0.85rem;">V</span>
+            </div>
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--fg);font-size:0.88rem;line-height:1.2;">V & R Law</div>
+              <div style="font-size:0.58rem;color:var(--fg-muted);letter-spacing:0.12em;text-transform:uppercase;">Associates</div>
+            </div>
+          </div>
+          <p style="color:var(--fg-muted);font-size:0.82rem;line-height:1.7;">
+            Client-focused legal practice in Wadakkanchery, Thrissur — specialising in criminal law and strategic litigation.
+          </p>
+        </div>
+
+        <div>
+          <div style="font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:16px;">Quick Links</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="#about" class="foot-link">About the Firm</a>
+            <a href="#advocates" class="foot-link">Our Advocates</a>
+            <a href="#practice" class="foot-link">Practice Areas</a>
+            <a href="#contact" class="foot-link">Contact Us</a>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:16px;">Practice Areas</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="#practice" class="foot-link">Criminal Defence</a>
+            <a href="#practice" class="foot-link">Bail Applications</a>
+            <a href="#practice" class="foot-link">Legal Strategy</a>
+            <a href="#practice" class="foot-link">General Litigation</a>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:16px;">Location</div>
+          <p style="color:var(--fg-muted);font-size:0.82rem;line-height:1.7;">
+            V and R Law Associates<br/>
+            Wadakkanchery<br/>
+            Thrissur, Kerala<br/>
+            India
+          </p>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <a href="#" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border:1px solid rgba(201,168,76,0.15);border-radius:10px;color:var(--accent);font-size:0.85rem;text-decoration:none;transition:background 0.3s;" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border:1px solid rgba(201,168,76,0.15);border-radius:10px;color:var(--accent);font-size:0.85rem;text-decoration:none;transition:background 0.3s;" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border:1px solid rgba(201,168,76,0.15);border-radius:10px;color:var(--accent);font-size:0.85rem;text-decoration:none;transition:background 0.3s;" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+        <p style="color:var(--fg-muted);font-size:0.75rem;">
+          &copy; 2025 V and R Law Associates. All rights reserved.
+        </p>
+        <p style="color:var(--fg-muted);font-size:0.75rem;">
+          Wadakkanchery, Thrissur, Kerala
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <i class="fas fa-check-circle" style="color:var(--accent);font-size:1.1rem;"></i>
+      <span id="toastMsg">Enquiry sent successfully!</span>
+    </div>
+  </div>
+
+  <script>
+    /* Background canvas — gold particles */
+    (function() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, particles = [], mouse = { x: -999, y: -999 };
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      document.addEventListener('mousemove', function(e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      const count = Math.min(60, Math.floor(window.innerWidth / 25));
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.5 + 0.5,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          alpha: Math.random() * 0.4 + 0.1,
+          gold: Math.random() > 0.6
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (let p of particles) {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150 && dist > 0) {
+            const force = (150 - dist) / 150 * 0.5;
+            p.vx += (dx / dist) * force * 0.05;
+            p.vy += (dy / dist) * force * 0.05;
+          }
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.99;
+          p.vy *= 0.99;
+          if (p.x < -10) p.x = w + 10;
+          if (p.x > w + 10) p.x = -10;
+          if (p.y < -10) p.y = h + 10;
+          if (p.y > h + 10) p.y = -10;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, Math.max(0.1, p.r), 0, Math.PI * 2);
+          ctx.fillStyle = p.gold
+            ? 'rgba(201,168,76,' + p.alpha + ')'
+            : 'rgba(120,160,140,' + (p.alpha * 0.6) + ')';
+          ctx.fill();
+        }
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(201,168,76,' + (0.06 * (1 - dist / 120)) + ')';
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* Scroll reveal */
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function(el) { revealObs.observe(el); });
+
+    /* Stat counter */
+    const statEls = document.querySelectorAll('.stat-num[data-count]');
+    const statObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !entry.target.dataset.animated) {
+          entry.target.dataset.animated = 'true';
+          const target = parseInt(entry.target.dataset.count);
+          const suffix = entry.target.dataset.suffix || '';
+          const duration = 1600;
+          const start = performance.now();
+          function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            entry.target.textContent = Math.floor(target * ease) + suffix;
+            if (progress < 1) requestAnimationFrame(update);
+            else entry.target.textContent = target + suffix;
+          }
+          requestAnimationFrame(update);
+        }
+      });
+    }, { threshold: 0.5 });
+    statEls.forEach(function(el) { statObs.observe(el); });
+
+    /* Nav hide/show */
+    let lastScroll = 0;
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', function() {
+      const curr = window.pageYOffset;
+      if (curr > lastScroll && curr > 100) nav.classList.add('hide-nav');
+      else nav.classList.remove('hide-nav');
+      lastScroll = curr;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('scrollProgress').style.width = (docHeight > 0 ? (window.pageYOffset / docHeight) * 100 : 0) + '%';
+    });
+
+    /* Mobile menu */
+    const mobileMenu = document.getElementById('mobileMenu');
+    document.getElementById('mobToggle').addEventListener('click', function() {
+      mobileMenu.classList.add('open');
+    });
+    document.getElementById('mobClose').addEventListener('click', closeMobile);
+    function closeMobile() { mobileMenu.classList.remove('open'); }
+
+    /* Contact form */
+    function handleSubmit(e) {
+      e.preventDefault();
+      showToast('Enquiry sent successfully! We will contact you shortly.');
+      e.target.reset();
+    }
+
+    /* Toast */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 4000);
+    }
+
+    /* Smooth scroll */
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
